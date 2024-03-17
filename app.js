@@ -1,77 +1,81 @@
-import yargs from "yargs";
+import inquirer from "inquirer";
 import Notes from "./notes.js";
-import { hideBin } from "yargs/helpers";
 
-const y = yargs(hideBin(process.argv));
 const notes = new Notes();
 
-// Add New Note
-y.command({
-  command: "add",
-  describe: "Add a new note",
-  builder: {
-    title: {
-      describe: "Note title",
-      demandOption: true,
-      type: "string",
+// Prompt the user for action selection
+function promptAction() {
+  return inquirer.prompt([
+    {
+      type: "list",
+      name: "action",
+      message: "What would you like to do?",
+      choices: [
+        "Add a new note",
+        "Remove a note",
+        "List all notes",
+        "Read a note",
+        "Exit",
+      ],
     },
-    body: {
-      describe: "Note body",
-      demandOption: true,
-      type: "string",
+  ]);
+}
+
+// Prompt the user for note details
+function promptNoteDetails() {
+  return inquirer.prompt([
+    {
+      type: "input",
+      name: "title",
+      message: "Enter note title:",
     },
-  },
-  handler(argv) {
-    notes.addNote(argv.title, argv.body);
-  },
-});
-
-// Remove Note
-y.command({
-  command: "remove",
-  describe: "Remove a note",
-  builder: {
-    title: {
-      describe: "Note Title",
-      demandOption: true,
-      type: "string",
+    {
+      type: "input",
+      name: "body",
+      message: "Enter note body:",
     },
-  },
-  handler(argv) {
-    notes.removeNote(argv.title);
-  },
-});
+  ]);
+}
 
-// List All Notes
-y.command({
-  command: "list",
-  describe: "List all notes",
-  handler() {
-    notes.listNotes();
-  },
-});
-
-// Read Note
-y.command({
-  command: "read",
-  describe: "Read a note",
-  builder: {
-    title: {
-      describe: "Note Title",
-      demandOption: true,
-      type: "string",
+// Prompt the user for note title
+function promptNoteTitle() {
+  return inquirer.prompt([
+    {
+      type: "input",
+      name: "title",
+      message: "Enter note title:",
     },
-  },
-  handler(argv) {
-    notes.readNote(argv.title);
-  },
-});
+  ]);
+}
 
-// Demand Atleast one command from the user
-y.demandCommand(1, "Please specify a command");
+// Main function to handle user actions
+async function main() {
+  let exit = false;
 
-// Show help for unknown commands
-y.strict().help("help");
+  while (!exit) {
+    const { action } = await promptAction();
 
-// Parse the content
-y.parse();
+    switch (action) {
+      case "Add a new note":
+        const { title, body } = await promptNoteDetails();
+        notes.addNote(title, body);
+        break;
+      case "Remove a note":
+        const { title: removeTitle } = await promptNoteTitle();
+        notes.removeNote(removeTitle);
+        break;
+      case "List all notes":
+        notes.listNotes();
+        break;
+      case "Read a note":
+        const { title: readTitle } = await promptNoteTitle();
+        notes.readNote(readTitle);
+        break;
+      case "Exit":
+        exit = true;
+        break;
+    }
+  }
+}
+
+main();
