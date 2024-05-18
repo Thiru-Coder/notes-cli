@@ -28,11 +28,19 @@ function promptNoteDetails() {
       type: "input",
       name: "title",
       message: "Enter note title:",
+      validate: function (input) {
+        if (!input) return false;
+        return /^[a-zA-Z]/.test(input);
+      },
     },
     {
       type: "input",
       name: "body",
       message: "Enter note body:",
+      validate: function (input) {
+        if (!input) return false;
+        return /^[a-zA-Z]/.test(input);
+      },
     },
   ]);
 }
@@ -44,6 +52,10 @@ function promptNoteTitle() {
       type: "input",
       name: "title",
       message: "Enter note title:",
+      validate: function (input) {
+        if (!input) return false;
+        return /^[a-zA-Z]/.test(input);
+      },
     },
   ]);
 }

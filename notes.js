@@ -9,8 +9,14 @@ class Notes {
     this.logTitle = chalk.bold.blue;
   }
 
+  capitalizeFirstLetter(str) {
+    return str.replace(/\b\w/g, function (char) {
+      return char.toUpperCase();
+    });
+  }
+
   addNote(noteTitle, body) {
-    const title = noteTitle.toLowerCase();
+    const title = this.capitalizeFirstLetter(noteTitle);
     const notes = FileOperations.loadNotes();
     const duplicateNote = notes.find((note) => note.title === title);
 
@@ -25,7 +31,7 @@ class Notes {
   }
 
   removeNote(noteTitle) {
-    const title = noteTitle.toLowerCase();
+    const title = this.capitalizeFirstLetter(noteTitle);
     let notes = FileOperations.loadNotes();
     const filteredNotes = notes.filter((note) => note.title !== title);
 
@@ -51,7 +57,7 @@ class Notes {
   }
 
   readNote(noteTitle) {
-    const title = noteTitle.toLowerCase();
+    const title = this.capitalizeFirstLetter(noteTitle);
     const notes = FileOperations.loadNotes();
     const note = notes.find((note) => note.title === title);
 
